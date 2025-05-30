@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'dart:math';
+import 'dart:typed_data';
+import 'package:path/path.dart' as p;
 import '../models/sleep_data.dart';
 
 class AIAudioAnalysisService {
@@ -18,8 +21,7 @@ class AIAudioAnalysisService {
         throw Exception('Audio file not found: $audioFilePath');
       }
 
-      // 実際のAI分析の代わりに、モック分析を実行
-      return await _mockAnalyzeAudio(audioFilePath);
+      return await _analyzeWavFile(audioFilePath);
 
       // 実際のAPI実装例（コメントアウト）:
       /*
@@ -65,7 +67,7 @@ class AIAudioAnalysisService {
       await Future.delayed(const Duration(seconds: 2));
 
       onProgress?.call('睡眠イベントを分類中...');
-      final events = await _mockAnalyzeAudio(audioFilePath);
+      final events = await _analyzeWavFile(audioFilePath);
 
       onProgress?.call('分析結果を処理中...');
       await Future.delayed(const Duration(milliseconds: 500));
@@ -175,6 +177,122 @@ class AIAudioAnalysisService {
           description: '通常の呼気音',
         ),
       );
+    }
+
+    return events;
+  }
+
+  Future<List<SoundEvent>> _analyzeWavFile(String audioFilePath) async {
+    final file = File(audioFilePath);
+    final bytes = await file.readAsBytes();
+    if (bytes.length < 44) {
+      throw Exception('Invalid WAV file');
+    }
+
+    final header = bytes.buffer.asByteData();
+    final sampleRate = header.getUint32(24, Endian.little);
+    final bitsPerSample = header.getUint16(34, Endian.little);
+    final dataSize = header.getUint32(40, Endian.little);
+    final bytesPerSample = bitsPerSample ~/ 8;
+    final totalSamples = dataSize ~/ bytesPerSample;
+
+    final samples = List<int>.generate(totalSamples, (i) {
+      final index = 44 + i * bytesPerSample;
+      return header.getInt16(index, Endian.little);
+    });
+
+    // 開始時間をファイル名から推定
+    final baseName = p.basenameWithoutExtension(audioFilePath);
+    DateTime baseTime;
+    try {
+      final ts = int.parse(baseName.split('_').last);
+      baseTime = DateTime.fromMillisecondsSinceEpoch(ts);
+    } catch (_) {
+      baseTime = DateTime.now();
+    }
+
+    final events = <SoundEvent>[];
+    final windowSize = sampleRate; // 1秒
+    int silentSamples = 0;
+
+    for (int i = 0; i < samples.length; i += windowSize) {
+      final end = min(i + windowSize, samples.length);
+      final segment = samples.sublist(i, end);
+      final avgAmplitude =
+          segment.fold<int>(0, (p, s) => p + s.abs()) / segment.length;
+
+      final timestamp = baseTime.add(Duration(seconds: i ~/ sampleRate));
+
+      if (avgAmplitude > 12000) {
+        events.add(
+          SoundEvent(
+            id: 'cough_$i',
+            type: SoundType.cough,
+            timestamp: timestamp,
+            duration: Duration(seconds: (end - i) ~/ sampleRate),
+            audioFilePath: audioFilePath,
+            confidence: 0.8,
+            description: '咳音',
+          ),
+        );
+        silentSamples = 0;
+      } else if (avgAmplitude > 6000) {
+        events.add(
+          SoundEvent(
+            id: 'snore_$i',
+            type: SoundType.snoring,
+            timestamp: timestamp,
+            duration: Duration(seconds: (end - i) ~/ sampleRate),
+            audioFilePath: audioFilePath,
+            confidence: 0.7,
+            description: 'いびき音',
+          ),
+        );
+        silentSamples = 0;
+      } else if (avgAmplitude < 500) {
+        silentSamples += segment.length;
+        if (silentSamples >= sampleRate * 10) {
+          final apneaStart = timestamp.subtract(Duration(seconds: 10));
+          events.add(
+            SoundEvent(
+              id: 'apnea_$i',
+              type: SoundType.apnea,
+              timestamp: apneaStart,
+              duration: const Duration(seconds: 10),
+              audioFilePath: audioFilePath,
+              confidence: 0.6,
+              description: '無呼吸疑い',
+            ),
+          );
+          silentSamples = 0;
+        }
+      } else if (avgAmplitude > 3000) {
+        events.add(
+          SoundEvent(
+            id: 'talk_$i',
+            type: SoundType.sleepTalk,
+            timestamp: timestamp,
+            duration: Duration(seconds: (end - i) ~/ sampleRate),
+            audioFilePath: audioFilePath,
+            confidence: 0.5,
+            description: '寝言音',
+          ),
+        );
+        silentSamples = 0;
+      } else {
+        events.add(
+          SoundEvent(
+            id: 'breath_$i',
+            type: i % 2 == 0 ? SoundType.inhale : SoundType.exhale,
+            timestamp: timestamp,
+            duration: Duration(seconds: (end - i) ~/ sampleRate),
+            audioFilePath: audioFilePath,
+            confidence: 0.4,
+            description: '呼吸音',
+          ),
+        );
+        silentSamples = 0;
+      }
     }
 
     return events;

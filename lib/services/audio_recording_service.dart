@@ -33,7 +33,7 @@ class AudioRecordingService {
     }
 
     final timestamp = DateTime.now().millisecondsSinceEpoch;
-    return path.join(recordingsDir.path, 'sleep_session_$timestamp.aac');
+    return path.join(recordingsDir.path, 'sleep_session_$timestamp.wav');
   }
 
   Future<bool> startRecording() async {
@@ -48,7 +48,7 @@ class AudioRecordingService {
 
       await _recorder!.startRecorder(
         toFile: _currentRecordingPath,
-        codec: Codec.aacADTS,
+        codec: Codec.pcm16WAV,
         bitRate: 128000,
         sampleRate: 44100,
       );
