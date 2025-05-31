@@ -1,3 +1,8 @@
+/// デザインドキュメント
+/// マイク使用に必要なパーミッション処理をまとめたヘルパ。
+/// - permission_handler パッケージで権限状態を取得・要求
+/// - 永久拒否時には設定画面への誘導ダイアログを表示
+/// - 各画面から直接呼び出せる静的メソッドとして提供
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 

@@ -1,3 +1,8 @@
+/// デザインドキュメント
+/// 睡眠効率などの統計値を可視化する画面。
+/// - SleepTrackingProvider から取得した SleepSession をもとに描画
+/// - fl_chart を利用し時間推移やイベント頻度をグラフ表示
+/// - 週次・月次の比較分析機能を追加できるよう拡張性を確保
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';

@@ -1,3 +1,9 @@
+/// デザインドキュメント
+/// アプリ全体の状態管理を担う ChangeNotifier。
+/// - AudioRecordingService でマイク入力を制御し SleepSession を生成
+/// - AIAudioAnalysisService で音声解析を行い SoundEvent を取得
+/// - SleepQualityAnalyzer で睡眠効率などの指標を計算してセッションに反映
+/// - start/stop 処理や進捗通知を UI に提供するシンプルな API を持つ
 import 'package:flutter/foundation.dart';
 import '../models/sleep_data.dart';
 import '../services/audio_recording_service.dart';

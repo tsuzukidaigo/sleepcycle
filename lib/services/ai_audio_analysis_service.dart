@@ -1,3 +1,8 @@
+/// デザインドキュメント
+/// 音声ファイルから睡眠関連イベントを抽出する AI 解析サービス。
+/// - 本リポジトリでは外部 API を呼び出さず乱数で擬似的な結果を生成
+/// - analyzeAudioFileWithProgress は進捗コールバックを提供し UI との連携を容易にする
+/// - 実運用では OpenAI Whisper 等のクラウド API との置き換えを想定
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';

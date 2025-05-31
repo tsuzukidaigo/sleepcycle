@@ -1,3 +1,8 @@
+/// デザインドキュメント
+/// アプリのメインとなるホーム画面。
+/// - 録音の開始・停止ボタンを表示し SleepTrackingProvider と連携
+/// - マイク権限がない場合は PermissionHelper でユーザーに要求
+/// - 分析完了後はグラフ画面やイベント一覧画面への遷移入口を提供
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';

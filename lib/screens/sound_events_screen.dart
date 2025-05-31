@@ -1,3 +1,8 @@
+/// デザインドキュメント
+/// 検出された音声イベントを種別ごとのタブで管理し再生を行う画面。
+/// - AudioPlayerService と連携して WAV ファイルのロード・再生・停止を制御
+/// - イベント毎に信頼度や説明文を表示しユーザー体験を向上
+/// - 将来的にはフィルタリングや共有機能の追加を計画
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/sleep_tracking_provider.dart';
