@@ -40,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
+  /// アプリが再度フォーカスを得た際にマイク権限を確認する
   Future<void> _checkPermissionStatus() async {
     final status = await Permission.microphone.status;
     print('App resumed, microphone permission status: $status');
@@ -68,6 +69,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   @override
+  /// ホーム画面全体のUIを構築する
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF1A1A2E),
@@ -94,6 +96,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  /// 画面上部のタイトルと説明を描画
   Widget _buildHeader() {
     return Container(
       alignment: Alignment.center,
@@ -121,6 +124,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  /// 録音中/待機中のUIを返す
   Widget _buildTrackingView(
     BuildContext context,
     SleepTrackingProvider provider,
@@ -244,6 +248,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  /// 記録終了後のセッション詳細を表示
   Widget _buildSessionView(
     BuildContext context,
     SleepTrackingProvider provider,
@@ -266,6 +271,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  /// 睡眠の質を表示するカードウィジェット
   Widget _buildSleepQualityCard(
     SleepSession session,
     Map<String, dynamic>? analytics,
@@ -311,6 +317,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  /// 就寝・起床時間などの統計をグリッド表示
   Widget _buildSleepStatsGrid(
     SleepSession session,
     Map<String, dynamic>? analytics,
@@ -349,6 +356,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  /// タイトル・値・アイコンを持つ統計カード
   Widget _buildStatCard(String title, String value, IconData icon) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -388,6 +396,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  /// 音響イベントの概要をチップ形式で表示
   Widget _buildSoundEventsPreview(
     BuildContext context,
     SleepTrackingProvider provider,
@@ -448,6 +457,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  /// イベント件数を表示する小さなチップ
   Widget _buildEventChip(String label, int count) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -466,6 +476,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  /// 分析画面遷移や新規記録開始ボタン群
   Widget _buildActionButtons(
     BuildContext context,
     SleepTrackingProvider provider,
@@ -516,6 +527,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  /// 録音経過時間を表示するタイマー
   Widget _buildRecordingTimer() {
     return StreamBuilder<DateTime>(
       stream: Stream.periodic(
@@ -542,6 +554,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  /// 睡眠履歴画面への遷移ボタン
   Widget _buildHistoryButton(BuildContext context) {
     return OutlinedButton.icon(
       onPressed: () {
@@ -558,6 +571,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  /// 録音開始・停止ボタンの押下処理
   void _handleTrackingButton(
     BuildContext context,
     SleepTrackingProvider provider,
@@ -601,6 +615,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
+  /// 睡眠の質に応じた色を取得
   Color _getQualityColor(SleepQuality? quality) {
     switch (quality) {
       case SleepQuality.excellent:
@@ -616,10 +631,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
+  /// HH:mm 形式で時刻を整形
   String _formatTime(DateTime time) {
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
   }
 
+  /// Duration を「X時間Y分」に変換
   String _formatDuration(Duration duration) {
     final hours = duration.inHours;
     final minutes = duration.inMinutes.remainder(60);

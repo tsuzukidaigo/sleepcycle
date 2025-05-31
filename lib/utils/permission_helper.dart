@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PermissionHelper {
+  /// マイク権限を確認し必要に応じてユーザーへ要求する
   static Future<bool> requestMicrophonePermission(BuildContext context) async {
     try {
       final status = await Permission.microphone.status;
@@ -71,6 +72,7 @@ class PermissionHelper {
     }
   }
 
+  /// 権限が必要な理由を説明するダイアログを表示
   static Future<bool> _showPermissionExplanationDialog(
     BuildContext context,
   ) async {
@@ -112,6 +114,7 @@ class PermissionHelper {
         false;
   }
 
+  /// 永久拒否時に設定アプリへの遷移を促すダイアログ
   static Future<void> _showSettingsDialog(BuildContext context) async {
     await showDialog(
       context: context,

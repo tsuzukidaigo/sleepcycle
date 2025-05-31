@@ -7,10 +7,12 @@ import 'package:provider/provider.dart';
 import 'providers/sleep_tracking_provider.dart';
 import 'screens/home_screen.dart';
 
+/// テスト用エントリポイント
 void main() {
   runApp(const SleepCycleApp());
 }
 
+/// HomeScreen だけを表示する簡易版アプリ
 class SleepCycleApp extends StatelessWidget {
   const SleepCycleApp({super.key});
 
