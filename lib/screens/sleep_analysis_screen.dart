@@ -13,6 +13,7 @@ class SleepAnalysisScreen extends StatelessWidget {
   const SleepAnalysisScreen({super.key});
 
   @override
+  /// 分析画面のメインUIを構築
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF1A1A2E),
@@ -55,6 +56,7 @@ class SleepAnalysisScreen extends StatelessWidget {
     );
   }
 
+  /// 睡眠の質サマリーカード
   Widget _buildSummaryCard(
     SleepSession session,
     Map<String, dynamic>? analytics,
@@ -113,6 +115,7 @@ class SleepAnalysisScreen extends StatelessWidget {
     );
   }
 
+  /// グラフ下部に表示する分析値のまとめ
   Widget _buildAnalyticsSummary(Map<String, dynamic>? analytics) {
     if (analytics == null) {
       return const SizedBox.shrink();
@@ -161,6 +164,7 @@ class SleepAnalysisScreen extends StatelessWidget {
     );
   }
 
+  /// ラベルと値を表示する小さなカード
   Widget _buildAnalyticsItem(String label, String value, IconData icon) {
     return Container(
       padding: const EdgeInsets.all(12),
@@ -200,6 +204,7 @@ class SleepAnalysisScreen extends StatelessWidget {
     );
   }
 
+  /// 音響イベントの割合を円グラフで表示
   Widget _buildSoundEventsChart(SleepSession session) {
     return Container(
       width: double.infinity,
@@ -230,6 +235,7 @@ class SleepAnalysisScreen extends StatelessWidget {
     );
   }
 
+  /// 音響イベントの種類別パイチャート
   Widget _buildSoundEventsPieChart(SleepSession session) {
     final eventCounts = <SoundType, int>{};
     for (final event in session.soundEvents) {
@@ -309,6 +315,7 @@ class SleepAnalysisScreen extends StatelessWidget {
     );
   }
 
+  /// タイムライングラフを包むコンテナ
   Widget _buildSleepTimelineChart(SleepSession session) {
     return Container(
       width: double.infinity,
@@ -339,6 +346,7 @@ class SleepAnalysisScreen extends StatelessWidget {
     );
   }
 
+  /// イベント発生時刻を折れ線で描画
   Widget _buildTimelineChart(SleepSession session) {
     if (session.soundEvents.isEmpty) {
       return const Center(
@@ -440,6 +448,7 @@ class SleepAnalysisScreen extends StatelessWidget {
     );
   }
 
+  /// 睡眠改善のヒントを表示するウィジェット
   Widget _buildRecommendations(
     SleepSession session,
     Map<String, dynamic>? analytics,
@@ -500,6 +509,7 @@ class SleepAnalysisScreen extends StatelessWidget {
     );
   }
 
+  /// 分析結果からユーザーへのアドバイス文を生成
   List<String> _generateRecommendations(
     SleepSession session,
     Map<String, dynamic>? analytics,
@@ -539,6 +549,7 @@ class SleepAnalysisScreen extends StatelessWidget {
     return recommendations;
   }
 
+  /// 評価に応じた色を返す
   Color _getQualityColor(SleepQuality? quality) {
     switch (quality) {
       case SleepQuality.excellent:
@@ -554,6 +565,7 @@ class SleepAnalysisScreen extends StatelessWidget {
     }
   }
 
+  /// 評価に応じたアイコンを返す
   IconData _getQualityIcon(SleepQuality? quality) {
     switch (quality) {
       case SleepQuality.excellent:
@@ -569,6 +581,7 @@ class SleepAnalysisScreen extends StatelessWidget {
     }
   }
 
+  /// サウンド種別ごとの表示色
   Color _getSoundTypeColor(SoundType type) {
     switch (type) {
       case SoundType.snoring:
@@ -588,6 +601,7 @@ class SleepAnalysisScreen extends StatelessWidget {
     }
   }
 
+  /// 折れ線グラフ用にサウンド種別を数値化
   double _getSoundTypeValue(SoundType type) {
     switch (type) {
       case SoundType.snoring:
@@ -607,6 +621,7 @@ class SleepAnalysisScreen extends StatelessWidget {
     }
   }
 
+  /// 数値からサウンド種別を逆変換
   SoundType _getValueSoundType(int value) {
     switch (value) {
       case 5:

@@ -25,11 +25,13 @@ class AudioRecordingService {
   String? get currentRecordingPath => _currentRecordingPath;
   DateTime? get recordingStartTime => _recordingStartTime;
 
+  /// レコーダーのインスタンスを生成し利用準備を行う
   Future<void> initialize() async {
     _recorder = FlutterSoundRecorder();
     await _recorder!.openRecorder();
   }
 
+  /// 録音ファイルを保存するパスを生成
   Future<String> _getRecordingPath() async {
     final directory = await getApplicationDocumentsDirectory();
     final recordingsDir = Directory(path.join(directory.path, 'recordings'));
@@ -42,6 +44,7 @@ class AudioRecordingService {
     return path.join(recordingsDir.path, 'sleep_session_$timestamp.wav');
   }
 
+  /// マイク録音を開始し成功可否を返します
   Future<bool> startRecording() async {
     if (_isRecording) return false;
 
@@ -67,6 +70,7 @@ class AudioRecordingService {
     }
   }
 
+  /// 録音を停止してファイルパスを返します
   Future<String?> stopRecording() async {
     if (!_isRecording) return null;
 
@@ -85,6 +89,7 @@ class AudioRecordingService {
     }
   }
 
+  /// 後始末としてレコーダーを解放
   Future<void> dispose() async {
     if (_isRecording) {
       await stopRecording();

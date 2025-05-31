@@ -10,10 +10,12 @@ import 'screens/home_screen.dart';
 import 'screens/sleep_analysis_screen.dart';
 import 'screens/sound_events_screen.dart';
 
+/// エントリポイント。アプリを起動する
 void main() {
   runApp(const SleepCycleApp());
 }
 
+/// アプリ全体のProviderとテーマを設定するWidget
 class SleepCycleApp extends StatelessWidget {
   const SleepCycleApp({super.key});
 
@@ -38,6 +40,7 @@ class SleepCycleApp extends StatelessWidget {
   }
 }
 
+/// ボトムナビゲーションを持つメイン画面
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -45,6 +48,7 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
+/// ナビゲーションバーの選択状態を管理するステート
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 

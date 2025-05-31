@@ -49,6 +49,7 @@ class _SoundEventsScreenState extends State<SoundEventsScreen>
   }
 
   @override
+  /// 音響イベント画面のUIを構築
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF1A1A2E),
@@ -90,6 +91,7 @@ class _SoundEventsScreenState extends State<SoundEventsScreen>
     );
   }
 
+  /// タブバーに表示する種別ラベル一覧
   List<Tab> _buildTabs() {
     final types = SoundType.values
         .where((type) => type != SoundType.unknown)
@@ -97,6 +99,7 @@ class _SoundEventsScreenState extends State<SoundEventsScreen>
     return types.map((type) => Tab(text: type.displayName)).toList();
   }
 
+  /// 種別ごとのイベントリストビューを生成
   List<Widget> _buildTabViews(SleepSession session) {
     final types = SoundType.values
         .where((type) => type != SoundType.unknown)
@@ -104,6 +107,7 @@ class _SoundEventsScreenState extends State<SoundEventsScreen>
     return types.map((type) => _buildEventList(session, type)).toList();
   }
 
+  /// 指定タイプのイベント一覧を表示
   Widget _buildEventList(SleepSession session, SoundType type) {
     final events = session.soundEvents
         .where((event) => event.type == type)
@@ -175,6 +179,7 @@ class _SoundEventsScreenState extends State<SoundEventsScreen>
     );
   }
 
+  /// 個々のイベントカードウィジェット
   Widget _buildEventCard(SoundEvent event, DateTime bedTime) {
     final isPlaying = _playingEventId == event.id;
     final relativeTime = event.timestamp.difference(bedTime);
@@ -265,6 +270,7 @@ class _SoundEventsScreenState extends State<SoundEventsScreen>
     );
   }
 
+  /// 再生・一時停止ボタン
   Widget _buildPlayButton(SoundEvent event) {
     final isPlaying = _playingEventId == event.id;
 
@@ -284,6 +290,7 @@ class _SoundEventsScreenState extends State<SoundEventsScreen>
     );
   }
 
+  /// 再生位置を表示するプログレスバー
   Widget _buildPlaybackProgress() {
     return StreamBuilder<Duration>(
       stream: _audioPlayer.positionStream,
@@ -322,6 +329,7 @@ class _SoundEventsScreenState extends State<SoundEventsScreen>
     );
   }
 
+  /// イベントをタップした際の再生/停止処理
   void _handlePlayButton(SoundEvent event) async {
     if (_playingEventId == event.id) {
       // 現在再生中の場合は停止
@@ -357,6 +365,7 @@ class _SoundEventsScreenState extends State<SoundEventsScreen>
     }
   }
 
+  /// 種別に応じたアイコンを取得
   IconData _getTypeIcon(SoundType type) {
     switch (type) {
       case SoundType.snoring:
@@ -376,6 +385,7 @@ class _SoundEventsScreenState extends State<SoundEventsScreen>
     }
   }
 
+  /// 種別に応じたテーマカラーを返す
   Color _getTypeColor(SoundType type) {
     switch (type) {
       case SoundType.snoring:
@@ -395,10 +405,12 @@ class _SoundEventsScreenState extends State<SoundEventsScreen>
     }
   }
 
+  /// 時刻をHH:mm形式で整形
   String _formatTime(DateTime time) {
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
   }
 
+  /// Durationをmm:ssまたはhh:mm:ss形式に変換
   String _formatDuration(Duration duration) {
     if (duration.inHours > 0) {
       return '${duration.inHours}:${(duration.inMinutes % 60).toString().padLeft(2, '0')}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
@@ -407,6 +419,7 @@ class _SoundEventsScreenState extends State<SoundEventsScreen>
     }
   }
 
+  /// 就寝からの経過時間を表現
   String _formatRelativeTime(Duration duration) {
     final hours = duration.inHours;
     final minutes = duration.inMinutes % 60;
@@ -418,6 +431,7 @@ class _SoundEventsScreenState extends State<SoundEventsScreen>
     }
   }
 
+  /// イベントリストの総継続時間を算出
   String _formatTotalDuration(List<SoundEvent> events) {
     final totalDuration = events.fold<Duration>(
       Duration.zero,

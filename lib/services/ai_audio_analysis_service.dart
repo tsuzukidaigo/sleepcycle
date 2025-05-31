@@ -18,6 +18,7 @@ class AIAudioAnalysisService {
   // 実際の実装では、OpenAI Whisper API やGoogle Cloud Speech-to-Text APIなどを使用します
   // ここでは簡単なモックAPIを示しています
 
+  /// 音声ファイルを解析してイベント一覧を返す
   Future<List<SoundEvent>> analyzeAudioFile(String audioFilePath) async {
     try {
       // ファイルが存在するかチェック
@@ -51,6 +52,7 @@ class AIAudioAnalysisService {
   }
 
   // プログレス付きの分析関数
+  /// 解析処理の進行状況をコールバックで通知
   Future<List<SoundEvent>> analyzeAudioFileWithProgress(
     String audioFilePath, {
     Function(String)? onProgress,
@@ -86,6 +88,7 @@ class AIAudioAnalysisService {
     }
   }
 
+  /// ダミーの分析結果を生成するモック実装
   Future<List<SoundEvent>> _mockAnalyzeAudio(String audioFilePath) async {
     // モック分析 - 実際の実装では本物のAI分析を行います
     await Future.delayed(const Duration(seconds: 2)); // 分析時間をシミュレート
@@ -187,6 +190,7 @@ class AIAudioAnalysisService {
     return events;
   }
 
+  /// WAV ファイルを読み込み簡易的な特徴量でイベント抽出
   Future<List<SoundEvent>> _analyzeWavFile(String audioFilePath) async {
     final file = File(audioFilePath);
     final bytes = await file.readAsBytes();

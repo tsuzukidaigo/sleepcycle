@@ -26,6 +26,7 @@ class AudioPlayerService {
   Stream<Duration?> get durationStream => _player.durationStream;
   Stream<PlayerState> get playerStateStream => _player.playerStateStream;
 
+  /// プレイヤーを初期化して状態ストリームを監視
   Future<void> initialize() async {
     // プレイヤーの状態変更を監視
     _player.playerStateStream.listen((state) {
@@ -41,6 +42,7 @@ class AudioPlayerService {
     });
   }
 
+  /// 音声ファイルを読み込んで再生準備をする
   Future<bool> loadAudio(String audioPath) async {
     try {
       final file = File(audioPath);
@@ -57,6 +59,7 @@ class AudioPlayerService {
     }
   }
 
+  /// 再生を開始
   Future<void> play() async {
     try {
       await _player.play();
@@ -65,6 +68,7 @@ class AudioPlayerService {
     }
   }
 
+  /// 再生を一時停止
   Future<void> pause() async {
     try {
       await _player.pause();
@@ -73,6 +77,7 @@ class AudioPlayerService {
     }
   }
 
+  /// 再生を停止して位置をリセット
   Future<void> stop() async {
     try {
       await _player.stop();
@@ -82,6 +87,7 @@ class AudioPlayerService {
     }
   }
 
+  /// 指定位置へシーク
   Future<void> seek(Duration position) async {
     try {
       await _player.seek(position);
@@ -90,6 +96,7 @@ class AudioPlayerService {
     }
   }
 
+  /// 音量を0.0〜1.0で設定
   Future<void> setVolume(double volume) async {
     try {
       await _player.setVolume(volume.clamp(0.0, 1.0));
@@ -98,6 +105,7 @@ class AudioPlayerService {
     }
   }
 
+  /// 指定区間だけ再生するユーティリティ
   Future<void> playSegment(
     String audioPath,
     Duration start,
@@ -117,6 +125,7 @@ class AudioPlayerService {
     }
   }
 
+  /// プレイヤーを解放
   Future<void> dispose() async {
     await _player.dispose();
   }

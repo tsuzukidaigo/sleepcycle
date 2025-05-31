@@ -11,6 +11,7 @@ class SleepQualityAnalyzer {
   factory SleepQualityAnalyzer() => _instance;
   SleepQualityAnalyzer._internal();
 
+  /// 与えられたセッションを解析し睡眠指標を付加
   SleepSession analyzeSleepSession(SleepSession session) {
     // 睡眠効率を計算
     final sleepEfficiency = _calculateSleepEfficiency(session);
@@ -38,6 +39,7 @@ class SleepQualityAnalyzer {
     );
   }
 
+  /// 実睡眠時間から睡眠効率(%)を算出
   double _calculateSleepEfficiency(SleepSession session) {
     if (session.timeInBed == null || session.timeInBed!.inMinutes == 0) {
       return 0.0;
@@ -53,6 +55,7 @@ class SleepQualityAnalyzer {
     return (actualSleepTime.inMinutes / session.timeInBed!.inMinutes) * 100;
   }
 
+  /// いびきなどの中断を考慮して実際の睡眠時間を推定
   Duration? _estimateActualSleepTime(SleepSession session) {
     if (session.timeInBed == null) return null;
 
@@ -95,6 +98,7 @@ class SleepQualityAnalyzer {
     );
   }
 
+  /// 呼吸パターンの安定から入眠時刻を推定
   DateTime? _estimateSleepStartTime(SleepSession session) {
     if (session.soundEvents.isEmpty) {
       // 音響イベントがない場合は、ベッドに入ってから15分後と仮定
@@ -125,6 +129,7 @@ class SleepQualityAnalyzer {
     return session.bedTime.add(const Duration(minutes: 20));
   }
 
+  /// イベント間隔の平均値を秒単位で計算
   double _calculateAverageInterval(List<SoundEvent> events) {
     if (events.length < 2) return 0;
 
@@ -138,6 +143,7 @@ class SleepQualityAnalyzer {
     return totalInterval / (events.length - 1);
   }
 
+  /// 蓄積したスコアから睡眠の質を段階評価
   SleepQuality _determineSleepQuality(
     SleepSession session,
     double sleepEfficiency,
@@ -209,6 +215,7 @@ class SleepQualityAnalyzer {
     return SleepQuality.poor;
   }
 
+  /// グラフ表示用の集計値を生成
   Map<String, dynamic> getSleepAnalytics(SleepSession session) {
     final snoringEvents = session.soundEvents
         .where((e) => e.type == SoundType.snoring)

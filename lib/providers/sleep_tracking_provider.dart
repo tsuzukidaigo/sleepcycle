@@ -30,11 +30,13 @@ class SleepTrackingProvider extends ChangeNotifier {
   String? get analysisProgress => _analysisProgress;
   String? get errorMessage => _errorMessage;
 
+  /// エラーメッセージをリセットしてUIに通知します
   void clearError() {
     _errorMessage = null;
     notifyListeners();
   }
 
+  /// 録音サービスの初期化を行います
   Future<void> initialize() async {
     try {
       await _recordingService.initialize();
@@ -44,6 +46,7 @@ class SleepTrackingProvider extends ChangeNotifier {
     }
   }
 
+  /// 就寝開始時に録音を開始し SleepSession を生成します
   Future<bool> startSleepTracking() async {
     try {
       _errorMessage = null;
@@ -78,6 +81,7 @@ class SleepTrackingProvider extends ChangeNotifier {
     }
   }
 
+  /// 起床時に録音を停止し分析処理を実行します
   Future<void> stopSleepTracking() async {
     try {
       if (!_isRecording || _currentSession == null) return;
@@ -108,6 +112,7 @@ class SleepTrackingProvider extends ChangeNotifier {
     }
   }
 
+  /// 収録済みの音声ファイルをAIで解析し結果をセッションに反映
   Future<void> _analyzeRecordedAudio() async {
     if (_currentSession == null) return;
 
@@ -157,6 +162,7 @@ class SleepTrackingProvider extends ChangeNotifier {
     }
   }
 
+  /// 指定した種類の音響イベント一覧を取得
   List<SoundEvent> getSoundEventsByType(SoundType type) {
     if (_currentSession == null) return [];
     return _currentSession!.soundEvents
@@ -164,6 +170,7 @@ class SleepTrackingProvider extends ChangeNotifier {
         .toList();
   }
 
+  /// 音響イベントの種別ごとの件数を返します
   Map<SoundType, int> getSoundEventCounts() {
     if (_currentSession == null) return {};
 
@@ -176,17 +183,20 @@ class SleepTrackingProvider extends ChangeNotifier {
     return counts;
   }
 
+  /// 現在のセッションから統計情報を取得
   Map<String, dynamic>? getCurrentSleepAnalytics() {
     if (_currentSession == null) return null;
     return _qualityAnalyzer.getSleepAnalytics(_currentSession!);
   }
 
+  /// 現在のセッション情報を破棄します
   void clearCurrentSession() {
     _currentSession = null;
     notifyListeners();
   }
 
   @override
+  /// プロバイダー破棄時に録音サービスも解放
   void dispose() {
     _recordingService.dispose();
     super.dispose();

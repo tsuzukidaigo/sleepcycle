@@ -33,6 +33,7 @@ class SoundEvent {
     this.description,
   });
 
+  /// データモデルを Map に変換して保存・送信に使用する
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -45,6 +46,7 @@ class SoundEvent {
     };
   }
 
+  /// Map から SoundEvent を生成
   factory SoundEvent.fromMap(Map<String, dynamic> map) {
     return SoundEvent(
       id: map['id'],
@@ -83,6 +85,7 @@ class SleepSession {
     this.quality,
   });
 
+  /// SleepSession を Map へ変換し永続化に利用
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -97,6 +100,7 @@ class SleepSession {
     };
   }
 
+  /// Map から SleepSession インスタンスを生成
   factory SleepSession.fromMap(Map<String, dynamic> map) {
     return SleepSession(
       id: map['id'],
@@ -130,6 +134,7 @@ enum SleepQuality {
 }
 
 extension SleepQualityExtension on SleepQuality {
+  /// 表示用の日本語文字列を返す
   String get displayName {
     switch (this) {
       case SleepQuality.excellent:
@@ -145,6 +150,7 @@ extension SleepQualityExtension on SleepQuality {
 }
 
 extension SoundTypeExtension on SoundType {
+  /// 表示用の日本語文字列を返す
   String get displayName {
     switch (this) {
       case SoundType.snoring:
