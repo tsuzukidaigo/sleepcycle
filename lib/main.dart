@@ -1,3 +1,8 @@
+/// デザインドキュメント
+/// アプリの起動処理と全体ナビゲーションを定義する。
+/// - SleepTrackingProvider を ChangeNotifierProvider で初期化し状態管理を統一
+/// - BottomNavigationBar でホーム、分析、音声イベントの各画面を切り替える
+/// - アプリ全体のテーマやルート設定はここで一元管理する想定
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/sleep_tracking_provider.dart';

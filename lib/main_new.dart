@@ -1,3 +1,7 @@
+/// デザインドキュメント
+/// テスト用に機能を絞ったエントリポイント。
+/// - 開発時に HomeScreen のみを表示して動作確認を容易にする
+/// - SleepTrackingProvider の初期化処理は本番と共通でロジックを共有
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/sleep_tracking_provider.dart';

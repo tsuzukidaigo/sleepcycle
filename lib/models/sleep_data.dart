@@ -1,3 +1,9 @@
+/// デザインドキュメント
+/// 睡眠記録を保持するためのデータモデル群。
+/// - SoundType は音声分類結果の種別を列挙
+/// - SoundEvent は検出時刻・継続時間・信頼度などのメタ情報を持つ
+/// - SleepSession は就寝から起床までの統計値と WAV ファイルへのパスを保持
+/// - toMap/fromMap で永続化やネットワーク送信を想定した変換を提供
 enum SoundType {
   snoring, // いびき
   sleepTalk, // 寝言

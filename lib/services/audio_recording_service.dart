@@ -1,3 +1,9 @@
+/// デザインドキュメント
+/// マイク入力の録音を担当するサービス。
+/// - flutter_sound を用いて 16bit WAV 形式で保存
+/// - startRecording/stopRecording で録音ファイルのパスと開始時刻を管理
+/// - アプリ内で単一のインスタンスを共有する Singleton 構成
+/// - 将来的にはバックグラウンド録音や圧縮フォーマット対応を検討
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter_sound/flutter_sound.dart';
