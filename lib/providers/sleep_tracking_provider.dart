@@ -9,6 +9,8 @@ import '../models/sleep_data.dart';
 import '../services/audio_recording_service.dart';
 import '../services/ai_audio_analysis_service.dart';
 import '../services/sleep_quality_analyzer.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SleepTrackingProvider extends ChangeNotifier {
   final AudioRecordingService _recordingService = AudioRecordingService();
@@ -30,6 +32,24 @@ class SleepTrackingProvider extends ChangeNotifier {
   String? get analysisProgress => _analysisProgress;
   String? get errorMessage => _errorMessage;
 
+  Future<void> _loadHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final data = prefs.getString('sleep_history');
+    if (data != null) {
+      final List<dynamic> list = json.decode(data);
+      _sleepHistory = list
+          .map((e) => SleepSession.fromMap(e as Map<String, dynamic>))
+          .toList();
+      notifyListeners();
+    }
+  }
+
+  Future<void> _saveHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final list = _sleepHistory.map((e) => e.toMap()).toList();
+    await prefs.setString('sleep_history', json.encode(list));
+  }
+
   /// エラーメッセージをリセットしてUIに通知します
   void clearError() {
     _errorMessage = null;
@@ -40,6 +60,7 @@ class SleepTrackingProvider extends ChangeNotifier {
   Future<void> initialize() async {
     try {
       await _recordingService.initialize();
+      await _loadHistory();
     } catch (e) {
       _errorMessage = 'Failed to initialize audio recording: $e';
       notifyListeners();
@@ -150,6 +171,7 @@ class SleepTrackingProvider extends ChangeNotifier {
 
       _currentSession = analyzedSession;
       _sleepHistory.add(analyzedSession);
+      await _saveHistory();
 
       _isAnalyzing = false;
       _analysisProgress = null;
@@ -187,6 +209,12 @@ class SleepTrackingProvider extends ChangeNotifier {
   Map<String, dynamic>? getCurrentSleepAnalytics() {
     if (_currentSession == null) return null;
     return _qualityAnalyzer.getSleepAnalytics(_currentSession!);
+  }
+
+  /// 履歴表示用にセッションを設定します
+  void setCurrentSession(SleepSession session) {
+    _currentSession = session;
+    notifyListeners();
   }
 
   /// 現在のセッション情報を破棄します
