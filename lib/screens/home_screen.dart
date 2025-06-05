@@ -11,6 +11,7 @@ import '../models/sleep_data.dart';
 import '../utils/permission_helper.dart';
 import 'sleep_analysis_screen.dart';
 import 'sound_events_screen.dart';
+import 'sleep_history_screen.dart';
 import '../utils/app_theme.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -569,7 +570,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget _buildHistoryButton(BuildContext context) {
     return OutlinedButton.icon(
       onPressed: () {
-        // 履歴画面への遷移を実装
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SleepHistoryScreen()),
+        );
       },
       icon: const Icon(Icons.history),
       label: const Text('睡眠履歴を見る'),
