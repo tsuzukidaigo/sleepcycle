@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/sleep_tracking_provider.dart';
 import 'screens/home_screen.dart';
+import 'utils/app_theme.dart';
 
 /// テスト用エントリポイント
 void main() {
@@ -25,10 +26,10 @@ class SleepCycleApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF4A90E2),
+            seedColor: AppTheme.accent,
             brightness: Brightness.dark,
           ),
-          scaffoldBackgroundColor: const Color(0xFF1A1A2E),
+          scaffoldBackgroundColor: AppTheme.background,
         ),
         home: const HomeScreen(),
         debugShowCheckedModeBanner: false,
