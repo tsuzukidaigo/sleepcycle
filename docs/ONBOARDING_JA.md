@@ -24,7 +24,7 @@
   - 一回の睡眠セッションを表し、検出イベントや睡眠効率を保持します。
 - **services/**
   - `audio_recording_service.dart`: `flutter_sound` で WAV 形式の録音を行います。
-  - `ai_audio_analysis_service.dart`: WAV ファイルを解析していびきや咳などのイベントを抽出します（現状はモック実装）。
+  - `ai_audio_analysis_service.dart`: WAV ファイルを解析していびきや咳などのイベントを抽出します。簡易的なロジスティック回帰モデルでオフライン分類を行います。
   - `sleep_quality_analyzer.dart`: 音響イベントから睡眠効率や質を計算します。
   - `audio_player_service.dart`: `just_audio` を利用した再生機能。
 

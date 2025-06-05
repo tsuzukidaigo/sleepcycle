@@ -8,12 +8,15 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'package:path/path.dart' as p;
 import '../models/sleep_data.dart';
+import 'lightweight_sound_classifier.dart';
 
 class AIAudioAnalysisService {
   static final AIAudioAnalysisService _instance =
       AIAudioAnalysisService._internal();
   factory AIAudioAnalysisService() => _instance;
   AIAudioAnalysisService._internal();
+
+  final LightweightSoundClassifier _classifier = LightweightSoundClassifier();
 
   // 実際の実装では、OpenAI Whisper API やGoogle Cloud Speech-to-Text APIなどを使用します
   // ここでは簡単なモックAPIを示しています
@@ -229,39 +232,16 @@ class AIAudioAnalysisService {
       final segment = samples.sublist(i, end);
       final avgAmplitude =
           segment.fold<int>(0, (p, s) => p + s.abs()) / segment.length;
-
       final timestamp = baseTime.add(Duration(seconds: i ~/ sampleRate));
 
-      if (avgAmplitude > 12000) {
-        events.add(
-          SoundEvent(
-            id: 'cough_$i',
-            type: SoundType.cough,
-            timestamp: timestamp,
-            duration: Duration(seconds: (end - i) ~/ sampleRate),
-            audioFilePath: audioFilePath,
-            confidence: 0.8,
-            description: '咳音',
-          ),
-        );
-        silentSamples = 0;
-      } else if (avgAmplitude > 6000) {
-        events.add(
-          SoundEvent(
-            id: 'snore_$i',
-            type: SoundType.snoring,
-            timestamp: timestamp,
-            duration: Duration(seconds: (end - i) ~/ sampleRate),
-            audioFilePath: audioFilePath,
-            confidence: 0.7,
-            description: 'いびき音',
-          ),
-        );
-        silentSamples = 0;
-      } else if (avgAmplitude < 500) {
+      // Features: [meanAmp, variance, zeroCrossingRate]
+      final features = _extractFeatures(segment);
+      final classified = _classifier.classify(features);
+
+      if (avgAmplitude < 500) {
         silentSamples += segment.length;
         if (silentSamples >= sampleRate * 10) {
-          final apneaStart = timestamp.subtract(Duration(seconds: 10));
+          final apneaStart = timestamp.subtract(const Duration(seconds: 10));
           events.add(
             SoundEvent(
               id: 'apnea_$i',
@@ -275,35 +255,62 @@ class AIAudioAnalysisService {
           );
           silentSamples = 0;
         }
-      } else if (avgAmplitude > 3000) {
-        events.add(
-          SoundEvent(
-            id: 'talk_$i',
-            type: SoundType.sleepTalk,
-            timestamp: timestamp,
-            duration: Duration(seconds: (end - i) ~/ sampleRate),
-            audioFilePath: audioFilePath,
-            confidence: 0.5,
-            description: '寝言音',
-          ),
-        );
-        silentSamples = 0;
       } else {
-        events.add(
-          SoundEvent(
-            id: 'breath_$i',
-            type: i % 2 == 0 ? SoundType.inhale : SoundType.exhale,
-            timestamp: timestamp,
-            duration: Duration(seconds: (end - i) ~/ sampleRate),
-            audioFilePath: audioFilePath,
-            confidence: 0.4,
-            description: '呼吸音',
-          ),
-        );
         silentSamples = 0;
+      }
+
+      switch (classified) {
+        case SoundType.snoring:
+        case SoundType.cough:
+        case SoundType.sleepTalk:
+          events.add(
+            SoundEvent(
+              id: '${classified.name}_$i',
+              type: classified,
+              timestamp: timestamp,
+              duration: Duration(seconds: (end - i) ~/ sampleRate),
+              audioFilePath: audioFilePath,
+              confidence: 0.7,
+              description: classified.displayName,
+            ),
+          );
+          break;
+        default:
+          events.add(
+            SoundEvent(
+              id: 'breath_$i',
+              type: i % 2 == 0 ? SoundType.inhale : SoundType.exhale,
+              timestamp: timestamp,
+              duration: Duration(seconds: (end - i) ~/ sampleRate),
+              audioFilePath: audioFilePath,
+              confidence: 0.4,
+              description: '呼吸音',
+            ),
+          );
       }
     }
 
     return events;
+  }
+
+  List<double> _extractFeatures(List<int> segment) {
+    final n = segment.length;
+    final absValues = segment.map((s) => s.abs()).toList();
+    final mean = absValues.reduce((a, b) => a + b) / n;
+    final variance = absValues
+            .map((a) => pow(a - mean, 2))
+            .reduce((a, b) => a + b) /
+        n;
+
+    int zeroCross = 0;
+    for (int i = 1; i < segment.length; i++) {
+      if ((segment[i - 1] >= 0 && segment[i] < 0) ||
+          (segment[i - 1] < 0 && segment[i] >= 0)) {
+        zeroCross++;
+      }
+    }
+    final zcr = zeroCross / n;
+
+    return [mean / 32768.0, variance / (32768.0 * 32768.0), zcr];
   }
 }
