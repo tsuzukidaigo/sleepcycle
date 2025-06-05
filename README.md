@@ -4,10 +4,12 @@ A new Flutter project.
 
 ## Sleep audio classification
 
-This project now includes a simple on-device classifier that processes the
-recorded WAV file and detects snoring, coughs, apnea-like silence and speech.
-Recordings are saved as `*.wav` files so that they can be analyzed without
-an internet connection.
+This project now includes a lightweight on-device model based on logistic
+regression. The classifier extracts simple acoustic features from each recorded
+segment and predicts snoring, coughs, sleep talking and breathing sounds without
+requiring any cloud services. Prolonged silence is additionally detected as a
+possible apnea event. Recordings are saved as `*.wav` files so that they can be
+analyzed completely offline.
 
 ## Getting Started
 
