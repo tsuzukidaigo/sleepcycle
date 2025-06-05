@@ -9,6 +9,7 @@ import 'providers/sleep_tracking_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/sleep_analysis_screen.dart';
 import 'screens/sound_events_screen.dart';
+import 'utils/app_theme.dart';
 
 /// エントリポイント。アプリを起動する
 void main() {
@@ -28,10 +29,10 @@ class SleepCycleApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF4A90E2),
+            seedColor: AppTheme.accent,
             brightness: Brightness.dark,
           ),
-          scaffoldBackgroundColor: const Color(0xFF1A1A2E),
+          scaffoldBackgroundColor: AppTheme.background,
         ),
         home: const MainScreen(),
         debugShowCheckedModeBanner: false,
@@ -63,8 +64,8 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xFF1A1A2E),
-        selectedItemColor: const Color(0xFF4A90E2),
+        backgroundColor: AppTheme.background,
+        selectedItemColor: AppTheme.accent,
         unselectedItemColor: Colors.grey,
         currentIndex: _currentIndex,
         onTap: (index) {

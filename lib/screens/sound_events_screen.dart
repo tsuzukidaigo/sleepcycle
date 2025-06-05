@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../providers/sleep_tracking_provider.dart';
 import '../models/sleep_data.dart';
 import '../services/audio_player_service.dart';
+import '../utils/app_theme.dart';
 
 class SoundEventsScreen extends StatefulWidget {
   const SoundEventsScreen({super.key});
@@ -52,16 +53,16 @@ class _SoundEventsScreenState extends State<SoundEventsScreen>
   /// 音響イベント画面のUIを構築
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A2E),
+      backgroundColor: AppTheme.background,
       appBar: AppBar(
         title: const Text('音響イベント'),
-        backgroundColor: const Color(0xFF16213E),
+        backgroundColor: AppTheme.cardBackground,
         foregroundColor: Colors.white,
         elevation: 0,
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
-          indicatorColor: const Color(0xFF4A90E2),
+          indicatorColor: AppTheme.accent,
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white60,
           onTap: (index) {
@@ -135,7 +136,7 @@ class _SoundEventsScreenState extends State<SoundEventsScreen>
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(16),
-          color: const Color(0xFF16213E),
+          color: AppTheme.cardBackground,
           child: Row(
             children: [
               Icon(_getTypeIcon(type), size: 24, color: _getTypeColor(type)),
@@ -188,10 +189,10 @@ class _SoundEventsScreenState extends State<SoundEventsScreen>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16213E),
+        color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isPlaying ? const Color(0xFF4A90E2) : Colors.transparent,
+          color: isPlaying ? AppTheme.accent : Colors.transparent,
           width: 2,
         ),
       ),
@@ -276,14 +277,14 @@ class _SoundEventsScreenState extends State<SoundEventsScreen>
 
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF4A90E2).withOpacity(0.2),
+        color: AppTheme.accent.withOpacity(0.2),
         shape: BoxShape.circle,
       ),
       child: IconButton(
         onPressed: () => _handlePlayButton(event),
         icon: Icon(
           isPlaying ? Icons.pause : Icons.play_arrow,
-          color: const Color(0xFF4A90E2),
+          color: AppTheme.accent,
         ),
         iconSize: 20,
       ),
@@ -306,7 +307,7 @@ class _SoundEventsScreenState extends State<SoundEventsScreen>
                   : 0,
               backgroundColor: Colors.white24,
               valueColor: const AlwaysStoppedAnimation<Color>(
-                Color(0xFF4A90E2),
+                AppTheme.accent,
               ),
             ),
             const SizedBox(height: 8),

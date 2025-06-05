@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../providers/sleep_tracking_provider.dart';
 import '../models/sleep_data.dart';
+import '../utils/app_theme.dart';
 
 class SleepAnalysisScreen extends StatelessWidget {
   const SleepAnalysisScreen({super.key});
@@ -16,10 +17,10 @@ class SleepAnalysisScreen extends StatelessWidget {
   /// 分析画面のメインUIを構築
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A2E),
+      backgroundColor: AppTheme.background,
       appBar: AppBar(
         title: const Text('睡眠分析'),
-        backgroundColor: const Color(0xFF16213E),
+        backgroundColor: AppTheme.cardBackground,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -65,10 +66,10 @@ class SleepAnalysisScreen extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF16213E),
+        color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF4A90E2).withOpacity(0.3),
+          color: AppTheme.accent.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -170,12 +171,12 @@ class SleepAnalysisScreen extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       margin: const EdgeInsets.only(right: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFF4A90E2).withOpacity(0.1),
+        color: AppTheme.accent.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         children: [
-          Icon(icon, size: 16, color: const Color(0xFF4A90E2)),
+          Icon(icon, size: 16, color: AppTheme.accent),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -210,10 +211,10 @@ class SleepAnalysisScreen extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF16213E),
+        color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF4A90E2).withOpacity(0.3),
+          color: AppTheme.accent.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -321,10 +322,10 @@ class SleepAnalysisScreen extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF16213E),
+        color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF4A90E2).withOpacity(0.3),
+          color: AppTheme.accent.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -428,7 +429,7 @@ class SleepAnalysisScreen extends StatelessWidget {
           LineChartBarData(
             spots: spots,
             isCurved: false,
-            color: const Color(0xFF4A90E2),
+            color: AppTheme.accent,
             barWidth: 2,
             dotData: FlDotData(
               show: true,
@@ -459,10 +460,10 @@ class SleepAnalysisScreen extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF16213E),
+        color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF4A90E2).withOpacity(0.3),
+          color: AppTheme.accent.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -555,7 +556,7 @@ class SleepAnalysisScreen extends StatelessWidget {
       case SleepQuality.excellent:
         return const Color(0xFF27AE60);
       case SleepQuality.good:
-        return const Color(0xFF4A90E2);
+        return AppTheme.accent;
       case SleepQuality.fair:
         return const Color(0xFFF39C12);
       case SleepQuality.poor:

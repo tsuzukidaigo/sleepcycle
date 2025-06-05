@@ -11,6 +11,7 @@ import '../models/sleep_data.dart';
 import '../utils/permission_helper.dart';
 import 'sleep_analysis_screen.dart';
 import 'sound_events_screen.dart';
+import '../utils/app_theme.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -72,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   /// ホーム画面全体のUIを構築する
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A2E),
+      backgroundColor: AppTheme.background,
       body: Consumer<SleepTrackingProvider>(
         builder: (context, provider, child) {
           return SafeArea(
@@ -102,21 +103,31 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       alignment: Alignment.center,
       child: Column(
         children: [
-          const Icon(Icons.bedtime, size: 48, color: Color(0xFF4A90E2)),
-          const SizedBox(height: 16),
+          StreamBuilder<DateTime>(
+            stream: Stream.periodic(
+              const Duration(seconds: 1),
+              (_) => DateTime.now(),
+            ),
+            builder: (context, snapshot) {
+              final now = snapshot.data ?? DateTime.now();
+              final time =
+                  '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+              return Text(
+                time,
+                style: const TextStyle(
+                  fontSize: 48,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 8),
           const Text(
             'Sleep Tracker',
             style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          Text(
-            '睡眠の質を分析してより良い睡眠を',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white.withOpacity(0.7),
+              fontSize: 20,
+              color: Colors.white54,
             ),
           ),
         ],
@@ -172,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
         if (provider.isAnalyzing) ...[
           const CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4A90E2)),
+            valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accent),
           ),
           const SizedBox(height: 24),
           Text(
@@ -188,11 +199,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               shape: BoxShape.circle,
               color: provider.isRecording
                   ? const Color(0xFFE74C3C).withOpacity(0.2)
-                  : const Color(0xFF4A90E2).withOpacity(0.2),
+                  : AppTheme.accent.withOpacity(0.2),
               border: Border.all(
                 color: provider.isRecording
                     ? const Color(0xFFE74C3C)
-                    : const Color(0xFF4A90E2),
+                    : AppTheme.accent,
                 width: 3,
               ),
             ),
@@ -210,7 +221,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         size: 64,
                         color: provider.isRecording
                             ? const Color(0xFFE74C3C)
-                            : const Color(0xFF4A90E2),
+                            : AppTheme.accent,
                       ),
                       const SizedBox(height: 16),
                       Text(
@@ -220,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           fontWeight: FontWeight.bold,
                           color: provider.isRecording
                               ? const Color(0xFFE74C3C)
-                              : const Color(0xFF4A90E2),
+                              : AppTheme.accent,
                         ),
                       ),
                     ],
@@ -280,10 +291,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0xFF16213E),
+        color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF4A90E2).withOpacity(0.3),
+          color: AppTheme.accent.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -361,17 +372,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF16213E),
+        color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color(0xFF4A90E2).withOpacity(0.3),
+          color: AppTheme.accent.withOpacity(0.3),
           width: 1,
         ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 24, color: const Color(0xFF4A90E2)),
+          Icon(icon, size: 24, color: AppTheme.accent),
           const SizedBox(height: 8),
           Text(
             title,
@@ -407,10 +418,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF16213E),
+        color: AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF4A90E2).withOpacity(0.3),
+          color: AppTheme.accent.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -462,10 +473,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: const Color(0xFF4A90E2).withOpacity(0.2),
+        color: AppTheme.accent.withOpacity(0.2),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF4A90E2).withOpacity(0.5),
+          color: AppTheme.accent.withOpacity(0.5),
           width: 1,
         ),
       ),
@@ -497,7 +508,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             icon: const Icon(Icons.analytics),
             label: const Text('詳細分析を見る'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4A90E2),
+              backgroundColor: AppTheme.accent,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.all(16),
               shape: RoundedRectangleBorder(
@@ -515,7 +526,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             label: const Text('新しい記録を開始'),
             style: OutlinedButton.styleFrom(
               foregroundColor: Colors.white,
-              side: const BorderSide(color: Color(0xFF4A90E2)),
+              side: const BorderSide(color: AppTheme.accent),
               padding: const EdgeInsets.all(16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -564,7 +575,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       label: const Text('睡眠履歴を見る'),
       style: OutlinedButton.styleFrom(
         foregroundColor: Colors.white,
-        side: const BorderSide(color: Color(0xFF4A90E2)),
+        side: const BorderSide(color: AppTheme.accent),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
@@ -621,7 +632,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       case SleepQuality.excellent:
         return const Color(0xFF27AE60);
       case SleepQuality.good:
-        return const Color(0xFF4A90E2);
+        return AppTheme.accent;
       case SleepQuality.fair:
         return const Color(0xFFF39C12);
       case SleepQuality.poor:
