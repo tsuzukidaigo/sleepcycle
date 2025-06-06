@@ -36,6 +36,8 @@ class SleepQualityAnalyzer {
       soundEvents: session.soundEvents,
       audioFilePath: session.audioFilePath,
       quality: quality,
+      sleepStages: session.sleepStages,
+      osaRisk: session.osaRisk,
     );
   }
 
@@ -251,6 +253,7 @@ class SleepQualityAnalyzer {
       'timeInBed': session.timeInBed,
       'actualSleepTime': session.actualSleepTime,
       'quality': session.quality,
+      'osaRisk': session.osaRisk,
     };
   }
 }

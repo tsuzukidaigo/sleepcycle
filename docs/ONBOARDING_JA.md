@@ -20,12 +20,15 @@
 - **SleepTrackingProvider** (`lib/providers/sleep_tracking_provider.dart`)
   - 録音開始・停止や解析進行状況を管理します。
   - `AudioRecordingService` と `AIAudioAnalysisService` を利用し、録音データから `SoundEvent` を生成して `SleepQualityAnalyzer` で睡眠指標を計算します。
+  - さらに `HomeSleepNetService` で睡眠段階を推定し、`SSTService` で OSA 危険度を算出します。
 - **SleepSession** (`lib/models/sleep_data.dart`)
   - 一回の睡眠セッションを表し、検出イベントや睡眠効率を保持します。
 - **services/**
   - `audio_recording_service.dart`: `flutter_sound` で WAV 形式の録音を行います。
   - `ai_audio_analysis_service.dart`: WAV ファイルを解析していびきや咳などのイベントを抽出します。簡易的なロジスティック回帰モデルでオフライン分類を行います。
   - `sleep_quality_analyzer.dart`: 音響イベントから睡眠効率や質を計算します。
+  - `home_sleep_net_service.dart`: HomeSleepNet を用いて Wake/REM/NREM を推定します。
+  - `sst_service.dart`: Snore Shifted-window Transformer により OSA リスクを評価します。
   - `audio_player_service.dart`: `just_audio` を利用した再生機能。
 
 ## 開発の進め方

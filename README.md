@@ -14,6 +14,11 @@ breathing. Long periods of silence are flagged as potential apnea events.
 Everything happens locally and recordings are stored as `*.wav` files so that
 you can review them without network access.
 
+The latest version also runs a lightweight sleep staging model (HomeSleepNet)
+to estimate **Wake**, **REM** and **NREM** periods. The same audio is passed to
+an SST model (Snore Shifted-window Transformer) which outputs a risk score for
+obstructive sleep apnea.
+
 ## Getting Started
 
 1. Install the [Flutter SDK](https://docs.flutter.dev/get-started/install).
