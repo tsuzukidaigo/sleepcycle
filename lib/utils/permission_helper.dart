@@ -10,6 +10,7 @@ class PermissionHelper {
   /// マイク権限を確認し必要に応じてユーザーへ要求する
   static Future<bool> requestMicrophonePermission(BuildContext context) async {
     try {
+      print('Requesting microphone permission...');
       final status = await Permission.microphone.status;
       print('Current microphone permission status: $status');
 

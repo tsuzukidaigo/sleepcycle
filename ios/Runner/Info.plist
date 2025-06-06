@@ -46,7 +46,14 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>This app needs access to microphone to record your sleep sounds for analysis.</string>
+	<string>睡眠中の音声を記録・分析して、より良い睡眠の質を提供するためにマイクロフォンへのアクセスが必要です。</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Flutter デバッグ用にローカルネットワークへ接続します</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_dartobservatory._tcp</string>
+		<string>_dartobservatory-proxy._tcp</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
