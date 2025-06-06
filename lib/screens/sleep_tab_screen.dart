@@ -65,6 +65,7 @@ class _SleepTabScreenState extends State<SleepTabScreen> {
           child: CupertinoDatePicker(
             mode: CupertinoDatePickerMode.time,
             use24hFormat: true,
+            minuteInterval: 5,
             initialDateTime: _wakeUpTime,
             onDateTimeChanged: (value) {
               setState(() {
