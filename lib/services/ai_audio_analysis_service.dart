@@ -206,6 +206,17 @@ class AIAudioAnalysisService {
     final bitsPerSample = header.getUint16(34, Endian.little);
     final dataSize = header.getUint32(40, Endian.little);
     final bytesPerSample = bitsPerSample ~/ 8;
+
+    // ゼロ除算を防ぐためのチェック
+    if (bytesPerSample == 0) {
+      throw Exception(
+        'Invalid WAV file: bytesPerSample is 0 (bitsPerSample: $bitsPerSample)',
+      );
+    }
+    if (sampleRate == 0) {
+      throw Exception('Invalid WAV file: sampleRate is 0');
+    }
+
     final totalSamples = dataSize ~/ bytesPerSample;
 
     final samples = List<int>.generate(totalSamples, (i) {
@@ -230,9 +241,17 @@ class AIAudioAnalysisService {
     for (int i = 0; i < samples.length; i += windowSize) {
       final end = min(i + windowSize, samples.length);
       final segment = samples.sublist(i, end);
+
+      // 空のセグメントをスキップ
+      if (segment.isEmpty) {
+        continue;
+      }
+
       final avgAmplitude =
           segment.fold<int>(0, (p, s) => p + s.abs()) / segment.length;
-      final timestamp = baseTime.add(Duration(seconds: i ~/ sampleRate));
+      final timestamp = baseTime.add(
+        Duration(seconds: sampleRate > 0 ? i ~/ sampleRate : 0),
+      );
 
       // Features: [meanAmp, variance, zeroCrossingRate]
       final features = _extractFeatures(segment);
@@ -268,7 +287,9 @@ class AIAudioAnalysisService {
               id: '${classified.name}_$i',
               type: classified,
               timestamp: timestamp,
-              duration: Duration(seconds: (end - i) ~/ sampleRate),
+              duration: Duration(
+                seconds: sampleRate > 0 ? (end - i) ~/ sampleRate : 1,
+              ),
               audioFilePath: audioFilePath,
               confidence: 0.7,
               description: classified.displayName,
@@ -281,7 +302,9 @@ class AIAudioAnalysisService {
               id: 'breath_$i',
               type: i % 2 == 0 ? SoundType.inhale : SoundType.exhale,
               timestamp: timestamp,
-              duration: Duration(seconds: (end - i) ~/ sampleRate),
+              duration: Duration(
+                seconds: sampleRate > 0 ? (end - i) ~/ sampleRate : 1,
+              ),
               audioFilePath: audioFilePath,
               confidence: 0.4,
               description: '呼吸音',
@@ -295,12 +318,16 @@ class AIAudioAnalysisService {
 
   List<double> _extractFeatures(List<int> segment) {
     final n = segment.length;
+
+    // 空のセグメントをチェック
+    if (n == 0) {
+      return [0.0, 0.0, 0.0];
+    }
+
     final absValues = segment.map((s) => s.abs()).toList();
     final mean = absValues.reduce((a, b) => a + b) / n;
-    final variance = absValues
-            .map((a) => pow(a - mean, 2))
-            .reduce((a, b) => a + b) /
-        n;
+    final variance =
+        absValues.map((a) => pow(a - mean, 2)).reduce((a, b) => a + b) / n;
 
     int zeroCross = 0;
     for (int i = 1; i < segment.length; i++) {
