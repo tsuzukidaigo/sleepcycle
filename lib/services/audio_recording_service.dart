@@ -17,6 +17,7 @@ class AudioRecordingService {
   AudioRecordingService._internal();
 
   FlutterSoundRecorder? _recorder;
+  bool _isRecorderInitialized = false;
   bool _isRecording = false;
   String? _currentRecordingPath;
   DateTime? _recordingStartTime;
@@ -25,10 +26,25 @@ class AudioRecordingService {
   String? get currentRecordingPath => _currentRecordingPath;
   DateTime? get recordingStartTime => _recordingStartTime;
 
-  /// レコーダーのインスタンスを生成し利用準備を行う
+  /// レコーダーのインスタンスを生成します
+  /// 実際の openRecorder は権限取得後に行うため
+  /// ここではインスタンス生成のみを行います
   Future<void> initialize() async {
     _recorder = FlutterSoundRecorder();
-    await _recorder!.openRecorder();
+  }
+
+  /// 録音用セッションを初期化します
+  Future<bool> _ensureRecorderInitialized() async {
+    if (_isRecorderInitialized) return true;
+    try {
+      _recorder ??= FlutterSoundRecorder();
+      await _recorder!.openRecorder();
+      _isRecorderInitialized = true;
+      return true;
+    } catch (e) {
+      print('Error initializing recorder: $e');
+      return false;
+    }
   }
 
   /// 録音ファイルを保存するパスを生成
@@ -51,6 +67,10 @@ class AudioRecordingService {
     try {
       // Permission check is now handled by the caller (PermissionHelper)
       // to avoid duplicate permission requests
+
+      // Ensure recorder is ready now that permission is granted
+      final ready = await _ensureRecorderInitialized();
+      if (!ready) return false;
 
       _currentRecordingPath = await _getRecordingPath();
       _recordingStartTime = DateTime.now();
