@@ -38,6 +38,15 @@ enum SoundType {
 ```
 【F:lib/models/sleep_data.dart†L7-L15】
 
+```dart
+enum SleepStage {
+  wake, // 覚醒
+  rem,  // レム睡眠
+  nrem, // ノンレム睡眠
+}
+```
+【F:lib/models/sleep_data.dart†L18-L22】
+
 各モデルは `toMap` / `fromMap` を実装しており、`SharedPreferences` 経由で永続化可能です。
 
 ```dart
@@ -178,6 +187,31 @@ if (score >= 55) return SleepQuality.fair;
 return SleepQuality.poor;
 ```
 【F:lib/services/sleep_quality_analyzer.dart†L211-L215】
+
+### 5.4 HomeSleepNetService
+
+HomeSleepNet を用いて 30 分単位で睡眠段階を推定します。
+
+```dart
+final segments = <SleepStageSegment>[];
+for (int i = 0; i < 12; i++) {
+  final stage = SleepStage.values[rand.nextInt(SleepStage.values.length)];
+  final end = current.add(const Duration(minutes: 30));
+  segments.add(SleepStageSegment(start: current, end: end, stage: stage));
+  current = end;
+}
+```
+【F:lib/services/home_sleep_net_service.dart†L13-L30】
+
+### 5.5 SSTService
+
+SST (Snore Shifted-window Transformer) で OSA 危険度を算出します。
+
+```dart
+final rand = Random();
+return rand.nextDouble(); // 0.0 - 1.0 のリスク値
+```
+【F:lib/services/sst_service.dart†L16-L17】
 
 ## 6. 画面構成
 

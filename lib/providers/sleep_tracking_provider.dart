@@ -9,6 +9,8 @@ import '../models/sleep_data.dart';
 import '../services/audio_recording_service.dart';
 import '../services/ai_audio_analysis_service.dart';
 import '../services/sleep_quality_analyzer.dart';
+import '../services/home_sleep_net_service.dart';
+import '../services/sst_service.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,6 +18,8 @@ class SleepTrackingProvider extends ChangeNotifier {
   final AudioRecordingService _recordingService = AudioRecordingService();
   final AIAudioAnalysisService _analysisService = AIAudioAnalysisService();
   final SleepQualityAnalyzer _qualityAnalyzer = SleepQualityAnalyzer();
+  final HomeSleepNetService _stageService = HomeSleepNetService();
+  final SSTService _sstService = SSTService();
 
   SleepSession? _currentSession;
   List<SleepSession> _sleepHistory = [];
@@ -151,6 +155,18 @@ class SleepTrackingProvider extends ChangeNotifier {
         },
       );
 
+      _analysisProgress = '睡眠段階を推定中...';
+      notifyListeners();
+      final stages = await _stageService.classifyStages(
+        _currentSession!.audioFilePath,
+      );
+
+      _analysisProgress = 'OSA リスクを算出中...';
+      notifyListeners();
+      final osaRisk = await _sstService.estimateRisk(
+        _currentSession!.audioFilePath,
+      );
+
       _analysisProgress = '睡眠の質を分析中...';
       notifyListeners();
 
@@ -162,6 +178,8 @@ class SleepTrackingProvider extends ChangeNotifier {
         timeInBed: _currentSession!.timeInBed,
         soundEvents: soundEvents,
         audioFilePath: _currentSession!.audioFilePath,
+        sleepStages: stages,
+        osaRisk: osaRisk,
       );
 
       // 睡眠の質を分析

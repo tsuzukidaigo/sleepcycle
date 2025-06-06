@@ -14,6 +14,42 @@ enum SoundType {
   unknown, // 不明
 }
 
+/// 睡眠段階を表す列挙体
+enum SleepStage {
+  wake, // 覚醒
+  rem, // レム睡眠
+  nrem, // ノンレム睡眠
+}
+
+/// 音声データから推定された睡眠段階の時間区間
+class SleepStageSegment {
+  final DateTime start;
+  final DateTime end;
+  final SleepStage stage;
+
+  SleepStageSegment({
+    required this.start,
+    required this.end,
+    required this.stage,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'start': start.millisecondsSinceEpoch,
+      'end': end.millisecondsSinceEpoch,
+      'stage': stage.index,
+    };
+  }
+
+  factory SleepStageSegment.fromMap(Map<String, dynamic> map) {
+    return SleepStageSegment(
+      start: DateTime.fromMillisecondsSinceEpoch(map['start']),
+      end: DateTime.fromMillisecondsSinceEpoch(map['end']),
+      stage: SleepStage.values[map['stage']],
+    );
+  }
+}
+
 class SoundEvent {
   final String id;
   final SoundType type;
@@ -71,6 +107,8 @@ class SleepSession {
   final List<SoundEvent> soundEvents;
   final String audioFilePath;
   final SleepQuality? quality;
+  final List<SleepStageSegment> sleepStages;
+  final double? osaRisk;
 
   SleepSession({
     required this.id,
@@ -83,6 +121,8 @@ class SleepSession {
     this.soundEvents = const [],
     required this.audioFilePath,
     this.quality,
+    this.sleepStages = const [],
+    this.osaRisk,
   });
 
   /// SleepSession を Map へ変換し永続化に利用
@@ -97,6 +137,8 @@ class SleepSession {
       'sleepEfficiency': sleepEfficiency,
       'audioFilePath': audioFilePath,
       'quality': quality?.index,
+      'sleepStages': sleepStages.map((e) => e.toMap()).toList(),
+      'osaRisk': osaRisk,
     };
   }
 
@@ -122,6 +164,12 @@ class SleepSession {
       quality: map['quality'] != null
           ? SleepQuality.values[map['quality']]
           : null,
+      sleepStages: map['sleepStages'] != null
+          ? (map['sleepStages'] as List)
+              .map((e) => SleepStageSegment.fromMap(e))
+              .toList()
+          : [],
+      osaRisk: map['osaRisk']?.toDouble(),
     );
   }
 }
@@ -145,6 +193,20 @@ extension SleepQualityExtension on SleepQuality {
         return '普通';
       case SleepQuality.poor:
         return '悪い';
+    }
+  }
+}
+
+extension SleepStageExtension on SleepStage {
+  /// 表示用の日本語文字列
+  String get displayName {
+    switch (this) {
+      case SleepStage.wake:
+        return '覚醒';
+      case SleepStage.rem:
+        return 'レム睡眠';
+      case SleepStage.nrem:
+        return 'ノンレム睡眠';
     }
   }
 }
