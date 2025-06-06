@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:math';
 import '../providers/sleep_tracking_provider.dart';
 import '../utils/app_theme.dart';
 
@@ -13,9 +14,17 @@ class SleepTabScreen extends StatefulWidget {
 
 class _SleepTabScreenState extends State<SleepTabScreen> {
   DateTime _wakeUpTime = DateTime.now().add(const Duration(hours: 8));
+  late final List<Offset> _stars;
 
   String _formatTime(DateTime time) {
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final rand = Random();
+    _stars = List.generate(80, (_) => Offset(rand.nextDouble(), rand.nextDouble()));
   }
 
   @override
@@ -36,16 +45,23 @@ class _SleepTabScreenState extends State<SleepTabScreen> {
                 end: Alignment.bottomCenter,
                 colors: isSleeping
                     ? [Colors.black, const Color(0xFF0A0A23)]
-                    : [const Color(0xFF001027), Colors.black],
+                    : [const Color(0xFF000814), const Color(0xFF1C3036)],
               ),
             ),
             child: SafeArea(
               child: Stack(
                 children: [
                   if (!isSleeping)
-                    _buildSetup(context, provider, rangeText)
-                  else
-                    _buildSleepMode(context, provider, rangeText),
+                    Positioned.fill(
+                      child: CustomPaint(
+                        painter: _StarFieldPainter(_stars),
+                      ),
+                    ),
+                  Center(
+                    child: isSleeping
+                        ? _buildSleepMode(context, provider, rangeText)
+                        : _buildSetup(context, provider, rangeText),
+                  ),
                 ],
               ),
             ),
@@ -62,16 +78,19 @@ class _SleepTabScreenState extends State<SleepTabScreen> {
       children: [
         SizedBox(
           height: 200,
-          child: CupertinoDatePicker(
-            mode: CupertinoDatePickerMode.time,
-            use24hFormat: true,
-            minuteInterval: 5,
-            initialDateTime: _wakeUpTime,
-            onDateTimeChanged: (value) {
-              setState(() {
-                _wakeUpTime = value;
-              });
-            },
+          child: DefaultTextStyle.merge(
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            child: CupertinoDatePicker(
+              mode: CupertinoDatePickerMode.time,
+              use24hFormat: true,
+              minuteInterval: 5,
+              initialDateTime: _wakeUpTime,
+              onDateTimeChanged: (value) {
+                setState(() {
+                  _wakeUpTime = value;
+                });
+              },
+            ),
           ),
         ),
         const SizedBox(height: 24),
@@ -159,4 +178,22 @@ class _SleepTabScreenState extends State<SleepTabScreen> {
       ],
     );
   }
+}
+
+class _StarFieldPainter extends CustomPainter {
+  final List<Offset> stars;
+
+  _StarFieldPainter(this.stars);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = Colors.white.withOpacity(0.6);
+    for (final offset in stars) {
+      final pos = Offset(offset.dx * size.width, offset.dy * size.height);
+      canvas.drawCircle(pos, 1.5, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
