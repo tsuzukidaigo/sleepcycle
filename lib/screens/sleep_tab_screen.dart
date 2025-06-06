@@ -16,6 +16,15 @@ class _SleepTabScreenState extends State<SleepTabScreen> {
   DateTime _wakeUpTime = DateTime.now().add(const Duration(hours: 8));
   late final List<Offset> _stars;
 
+  /// Round [time] up so that its minutes are divisible by [interval].
+  DateTime _roundToMinuteInterval(DateTime time, int interval) {
+    final remainder = time.minute % interval;
+    if (remainder != 0) {
+      time = time.add(Duration(minutes: interval - remainder));
+    }
+    return DateTime(time.year, time.month, time.day, time.hour, time.minute);
+  }
+
   String _formatTime(DateTime time) {
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
   }
@@ -25,6 +34,7 @@ class _SleepTabScreenState extends State<SleepTabScreen> {
     super.initState();
     final rand = Random();
     _stars = List.generate(80, (_) => Offset(rand.nextDouble(), rand.nextDouble()));
+    _wakeUpTime = _roundToMinuteInterval(_wakeUpTime, 5);
   }
 
   @override
